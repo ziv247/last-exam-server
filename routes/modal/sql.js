@@ -7,13 +7,13 @@ var connection = mysql.createConnection({
 });
 
 
-const insertRound = ({ player_name, range_from, range_to, player_number, guess_count }) => {
+const insertRound = ({ player_name, range_from, range_to, player_number, guess_count, guess }) => {
 
     const query =
-        'INSERT INTO `rounds` (player_name, range_from, range_to, player_number, guess_count ) values (?,?,?,?,?);';
+        'INSERT INTO `rounds` (player_name, range_from, range_to, player_number, guess_count,guess ) values (?,?,?,?,?,?);';
 
     const promise = new Promise((resolve, reject) => {
-        connection.query(query, [player_name, range_from, range_to, player_number, guess_count], function (error, results, fields) {
+        connection.query(query, [player_name, range_from, range_to, player_number, guess_count, guess], function (error, results, fields) {
             if (error) {
                 reject(error);
             }
@@ -23,20 +23,19 @@ const insertRound = ({ player_name, range_from, range_to, player_number, guess_c
     return promise;
 }
 
-const insertguess = ({ round_id, guess }) => {
-
-    const query =
-        'INSERT INTO `guesses` VALUES (default, ?,?);';
-
-    const promise = new Promise((resolve, reject) => {
-        connection.query(query, [round_id, guess], function (error, results, fields) {
+function getAll() {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT * FROM rounds"
+        connection.query(query, (error, results, fields) => {
             if (error) {
                 reject(error);
+                return;
             }
             resolve(results);
         });
     });
-    return promise;
 }
 
-module.exports = { insertRound, insertguess }
+
+
+module.exports = { insertRound, getAll }
